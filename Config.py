@@ -133,6 +133,7 @@ def cs_fix(fils, p):
             p.remove(fils[k])
         else:
             vu.append(p[0])
+            p.pop(0)
     return vu
 
 def croisement_simple(p1:list, p2:list, pts_croisement:int):
