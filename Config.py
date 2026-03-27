@@ -70,14 +70,14 @@ def fitness(trip:list): # Distance du parcouru
         distance += distance_euclidienne(trip[i], trip[i+1])
     return distance
 
-def init(population:list, nb_slt:int):
+def init(instances:list, nb_slt:int):
     solutions=[] # pt utiliser des dictionnaire ?
     for i in range(nb_slt):
         individu=[]
-        list_indice=[i for i in range(len(population))]
-        for k in range(len(population)):
+        list_indice=[i for i in range(len(instances))]
+        for k in range(len(instances)):
             indice=rd.randint(0, len(list_indice))
-            individu.append(population[indice])
+            individu.append(instances[indice])
             list_indice.pop(indice)
         solutions.append(individu)
     return solutions
@@ -117,3 +117,4 @@ def selection(population_fit:list, methode:str, parameters:list):
         return roulette(population_fit)
     elif methode=="elitisme":
         return elitisme(population_fit, parameters[0])
+    
