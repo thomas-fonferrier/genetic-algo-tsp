@@ -60,6 +60,16 @@ def main(instances:list, selection_method:str, crossover_method=None, mutation_m
         if mutation_method:
             population = mutation(ind_select, mutation_method, n_individus, n_perm)
 
+    final_population = evaluation(population)
+    index = 0
+    min = final_population[0][1]
+    for i in range(len(final_population)):
+        if final_population[i][1] < min:
+            min = final_population[i][1]
+            index = i
+    return final_population[index]
+
+
 
 def evaluation(population):
     list = []
