@@ -50,7 +50,7 @@ def permutation(inp_list:list, num:int):
 
     return out_list
 
-def main(instances:list, selection_method:str, mutation_method:str=None, n_loop:int=100, n_individus:int=1000, n_perm=0, n_elitism=0):
+def main(instances:list, selection_method:str, crossover_method=None, mutation_method:str=None, n_loop:int=100, n_individus:int=1000, n_perm=0, n_elitism=0):
     population = init(instances=instances, nb_slt=n_individus)
     for i in range(n_loop):
         population_fit = evaluation(population)
