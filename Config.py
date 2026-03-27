@@ -5,7 +5,7 @@ liste avec l'indice de la ville visité ordonnée.
 
 import numpy as np
 
-def distance(A, B):
+def distance_euclidienne(A, B):
     return np.sqrt((B[0]-A[0])**2 + (B[1]-A[1])**2)
 
 def distance_Haversine(A,B):
@@ -14,10 +14,10 @@ def distance_Haversine(A,B):
     return 2 * R * np.arcsin(np.sqrt(a))
 
 def fitness(trip:list): # Distance du parcous
-    
-    for city in trip:
-        pass
-    pass
+    distance=0
+    for i in range(len(trip)-1):
+        distance += distance_euclidienne(trip[i], trip[i+1])
+    return distance
 
 def init(cities:list):
     pass
