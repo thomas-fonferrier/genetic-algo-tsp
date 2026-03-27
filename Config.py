@@ -40,6 +40,10 @@ def permutation(inp_list:list, num:int):
         out_list[a] = inp_list[b]
 
     return out_list
+
+def main(population:list, mutation_method:str, selection_method:str, n:int=10000):
+    pass
+
         
 
 
