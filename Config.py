@@ -11,7 +11,10 @@ def fetch_data(instance):
 
 def mutation(individual:list, method:str, n=0):
     if method == "permutation":
-        permutation(inp_list=individual, num=n)
+        while len(new_pop) < n_individus_tot:
+            for individual in select_pop:
+                new_pop.append(permutation(inp_list=individual[0], num=n_perm))
+        return new_pop[:n_individus_tot]
 
 def permutation(inp_list:list, num:int):
     # obtain list of indices that will be shuffled
