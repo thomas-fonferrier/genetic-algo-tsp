@@ -9,6 +9,45 @@ def fetch_data(instance):
     data.raise_for_status()
     return data.json()
 
+def upload_result(student_id, instance_id, initial_instances, result):
+    if len(initial_instances) != len(result):
+        raise ValueError("initial_instances and result must have the same length.")
+
+    # Build point -> indices map to support repeated coordinates.
+    point_to_indices = {}
+    for idx, point in enumerate(initial_instances):
+        key = tuple(point)
+        point_to_indices.setdefault(key, []).append(idx)
+
+    tour = []
+    for point in result:
+        key = tuple(point)
+        if key not in point_to_indices or not point_to_indices[key]:
+            raise ValueError(
+                "result must contain exactly the same points as initial_instances."
+            )
+        tour.append(point_to_indices[key].pop(0))
+
+    # Ensure all initial points were consumed exactly once.
+    if any(remaining for remaining in point_to_indices.values()):
+        raise ValueError(
+            "result must contain exactly the same points as initial_instances."
+        )
+
+    payload = {
+        "student_id": student_id,
+        "instance_id": instance_id,
+        "tour": tour,
+    }
+    response = requests.post(
+        f"https://tsp-sra0.onrender.com/submit/{instance_id}",
+        json=payload,
+        timeout=30,
+    )
+    response.raise_for_status()
+    return response.json()
+
+
 ## Mutation :
 
 def mutation(select_pop:list, method:str, n_individus_tot, n_perm=0):
