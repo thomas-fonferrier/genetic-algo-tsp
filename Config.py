@@ -165,7 +165,8 @@ def init(instances:list, nb_slt:int):
         individu=[]
         list_indice=[i for i in range(len(instances))]
         for k in range(len(instances)):
-            indice=rd.randint(0, len(list_indice))
+            i=rd.randint(0, len(list_indice)-1)
+            indice=list_indice[i]
             individu.append(instances[indice])
             list_indice.remove(indice)
         solutions.append(individu)
