@@ -9,12 +9,14 @@ def fetch_data(instance):
 
 ## Mutation :
 
-def mutation(individual:list, method:str, n=0):
+def mutation(select_pop:list, method:str, n_individus_tot, n_perm=0):
+    new_pop = select_pop.copy()
     if method == "permutation":
         while len(new_pop) < n_individus_tot:
             for individual in select_pop:
                 new_pop.append(permutation(inp_list=individual[0], num=n_perm))
         return new_pop[:n_individus_tot]
+
 
 def permutation(inp_list:list, num:int):
     # obtain list of indices that will be shuffled
@@ -46,14 +48,15 @@ def permutation(inp_list:list, num:int):
 
     return out_list
 
-def main(instances:list, mutation_method:str, selection_method:str, n_loop:int=100, n_individus:int=1000, n_perm=0):
+def main(instances:list, selection_method:str, mutation_method:str=None, n_loop:int=100, n_individus:int=1000, n_perm=0, n_elitism=0):
     population = init(instances=instances, nb_slt=n_individus)
     for i in range(n_loop):
         population_fit = evaluation(population)
-        ind_select = selection(population_fit, selection_method, int(n_individus/10))
-        population = mutation(ind_select, mutation_method, n_individus, n_perm)
-
-
+        ind_select = selection(population_fit, selection_method, n_elitism)
+        if crossover_method:
+            population = crossover(population, crossover_method)
+        if mutation_method:
+            population = mutation(ind_select, mutation_method, n_individus, n_perm)
 
 
 def evaluation(population):
@@ -61,7 +64,6 @@ def evaluation(population):
     for individual in population:
         list.append((individual, fitness(individual)))
     return list
-
 
 ## Croisement : 
 def cs_fix(fils, p):
