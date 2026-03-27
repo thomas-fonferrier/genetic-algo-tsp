@@ -1,3 +1,10 @@
+import requests
+
+def fetch_data(instance):
+    data = requests.get(f"https://tsp-sra0.onrender.com/instances/{instance}")
+    data.raise_for_status()
+    return data.json()
+
 '''
 Format d'une solution :
 liste avec l'indice de la ville visité ordonnée.
