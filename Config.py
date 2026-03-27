@@ -89,13 +89,14 @@ def permutation(inp_list:list, num:int):
 
     return out_list
 
-def main(instances:list, selection_method:str, crossover_method=None, mutation_method:str=None, n_loop:int=100, n_individus:int=1000, n_perm=0, n_elitism=0):
+def main(instances:list, selection_method:str, crossover_method=None, mutation_method:str=None,
+          n_loop:int=100, n_individus:int=1000, n_perm=0, n_elitism=0, n_crossover:int=0):
     population = init(instances=instances, nb_slt=n_individus)
     for i in range(n_loop):
         population_fit = evaluation(population)
-        ind_select = selection(population_fit, selection_method, n_elitism)
+        ind_select = selection(population_fit, selection_method, [n_elitism])
         if crossover_method:
-            population = crossover(population, crossover_method)
+            population = crossover(population, crossover_method, [n_crossover])
         if mutation_method:
             population = mutation(ind_select, mutation_method, n_individus, n_perm)
 
@@ -165,9 +166,10 @@ def init(instances:list, nb_slt:int):
         individu=[]
         list_indice=[i for i in range(len(instances))]
         for k in range(len(instances)):
-            indice=rd.randint(0, len(list_indice))
+            i=rd.randint(0, len(list_indice)-1)
+            indice=list_indice[i]
             individu.append(instances[indice])
-            list_indice.pop(indice)
+            list_indice.remove(indice)
         solutions.append(individu)
     return solutions
 
@@ -185,20 +187,23 @@ def roulette(population_fit:list):
             selection.append(population_fit[k])
     return selection
 
-def tri_pivot(l:list,p):
-    if len(l)==1:
+def tri_pivot(l:list):
+    if l==[]:
+        return []
+    elif len(l)==1:
         return l
+    pivot=l[0][0]
     l1=[]
     l2=[]
     for k in range(1,len(l1)):
-        if l[k][0]<p:
+        if l[k][0]<pivot:
             l1.append(l[k])
         else :
             l2.append(l[k])
-    return tri_pivot(l1, l1[0][0]) + p + tri_pivot(l2, l2[0][0])
+    return tri_pivot(l1) + pivot + tri_pivot(l2)
 
 def elitisme(population_fit:list, n:int):
-    pop_triee=tri_pivot(population_fit,population_fit[0][0])
+    pop_triee=tri_pivot(population_fit)
     return pop_triee[:n]
         
 def selection(population_fit:list, methode:str, parameters:list):
