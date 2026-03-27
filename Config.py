@@ -112,3 +112,8 @@ def elitisme(population_fit:list, n:int):
     pop_triee=tri_pivot(population_fit,population_fit[0][0])
     return pop_triee[:n]
         
+def selection(population_fit:list, methode:str, parameters:list):
+    if methode=="roulette":
+        return roulette(population_fit)
+    elif methode=="elitisme":
+        return elitisme(population_fit, parameters[0])
