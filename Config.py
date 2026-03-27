@@ -180,9 +180,9 @@ def roulette(population_fit:list):
     selection = []
     sum_fit=0
     for k in range(n):
-        sum_fit+=population_fit[k][0]
+        sum_fit+=population_fit[k][1]
     for k in range(n):
-        proba=population_fit[k][0]/sum_fit
+        proba=population_fit[k][1]/sum_fit
         if rd.randint(0,100) < proba:
             selection.append(population_fit[k])
     return selection
