@@ -1,6 +1,8 @@
 
 import random
 import requests
+import numpy as np
+import random as rd
 
 def fetch_data(instance):
     data = requests.get(f"https://tsp-sra0.onrender.com/instances/{instance}")
@@ -48,7 +50,7 @@ def permutation(inp_list:list, num:int):
 
     return out_list
 
-def main(instances:list, selection_method:str, mutation_method:str=None, n_loop:int=100, n_individus:int=1000, n_perm=0, n_elitism=0):
+def main(instances:list, selection_method:str, crossover_method=None, mutation_method:str=None, n_loop:int=100, n_individus:int=1000, n_perm=0, n_elitism=0):
     population = init(instances=instances, nb_slt=n_individus)
     for i in range(n_loop):
         population_fit = evaluation(population)
@@ -81,7 +83,7 @@ def croisement_simple(p1:list, p2:list, pts_croisement:int):
     fils_2=[p2[:pts_croisement] + p1[pts_croisement+1:]]
     return cs_fix(fils_1, p1), cs_fix(fils_2, p2)
         
-def crossover_method(population:list, method:str, parameters:list):
+def crossover(population:list, method:str, parameters:list):
     if method=="simple":
         n=len(population)//2
         for k in range(n):
@@ -91,13 +93,6 @@ def crossover_method(population:list, method:str, parameters:list):
     
 
 ## Distance : calul + evalutation
-'''
-Format d'une solution :
-liste avec l'indice de la ville visité ordonnée.
-'''
-
-import numpy as np
-import random as rd
 
 def distance_euclidienne(A, B):
     return np.sqrt((B[0]-A[0])**2 + (B[1]-A[1])**2)
