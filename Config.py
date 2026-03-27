@@ -65,15 +65,28 @@ def evaluation(population):
 
 ## Croisement : 
 def cs_fix(fils, p):
-    pass
+    vu=[]
+    for k in range(len(fils)):
+        if fils[k] not in vu:
+            vu.append(fils[k])
+            p.remove(fils[k])
+        else:
+            vu.append(p[0])
+    return vu
 
 def croisement_simple(p1:list, p2:list, pts_croisement:int):
     fils_1=[p1[:pts_croisement] + p2[pts_croisement+1:]]
     fils_2=[p2[:pts_croisement] + p1[pts_croisement+1:]]
     return cs_fix(fils_1, p1), cs_fix(fils_2, p2)
-    pass
         
-
+def crossover_method(population:list, method:str, parameters:list):
+    if method=="simple":
+        n=len(population)//2
+        for k in range(n):
+            croisement_simple(population[2*k], population[2*k + 1], parameters[0])
+    else:
+        return population
+    
 
 ## Distance : calul + evalutation
 '''
