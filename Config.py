@@ -129,8 +129,8 @@ def cs_fix(fils, p):
     return vu
 
 def croisement_simple(p1:list, p2:list, pts_croisement:int):
-    fils_1=[p1[:pts_croisement] + p2[pts_croisement+1:]]
-    fils_2=[p2[:pts_croisement] + p1[pts_croisement+1:]]
+    fils_1=p1[:pts_croisement] + p2[pts_croisement+1:]
+    fils_2=p2[:pts_croisement] + p1[pts_croisement+1:]
     return cs_fix(fils_1, p1), cs_fix(fils_2, p2)
         
 def crossover(population:list, method:str, parameters:list):

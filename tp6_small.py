@@ -10,7 +10,7 @@ print(data)
 
 instance=data["cities"]
 s_m="elitisme"
-c_m=""
+c_m="simple"
 m_m=""
 
 n_l=100
