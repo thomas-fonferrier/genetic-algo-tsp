@@ -46,8 +46,21 @@ def permutation(inp_list:list, num:int):
 
     return out_list
 
-def main(population:list, mutation_method:str, selection_method:str, n:int=10000):
-    pass
+def main(instances:list, mutation_method:str, selection_method:str, n_loop:int=100, n_individus:int=1000, n_perm=0):
+    population = init(instances=instances, nb_slt=n_individus)
+    for i in range(n_loop):
+        population_fit = evaluation(population)
+        ind_select = selection(population_fit, selection_method, int(n_individus/10))
+        population = mutation(ind_select, mutation_method, n_individus, n_perm)
+
+
+
+
+def evaluation(population):
+    list = []
+    for individual in population:
+        list.append((individual, fitness(individual)))
+    return list
 
 
 ## Croisement : 
