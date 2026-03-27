@@ -40,7 +40,7 @@ def upload_result(student_id, instance_id, initial_instances, result):
         "tour": tour,
     }
     response = requests.post(
-        f"https://tsp-sra0.onrender.com/submit/{instance_id}",
+        "https://tsp-sra0.onrender.com/submit",
         json=payload,
         timeout=30,
     )
@@ -51,11 +51,18 @@ def upload_result(student_id, instance_id, initial_instances, result):
 ## Mutation :
 
 def mutation(select_pop:list, method:str, n_individus_tot, n_perm=0):
-    new_pop = select_pop.copy()
+    if not select_pop:
+        raise ValueError("selection returned an empty population.")
+
+    # selection stores tuples (individual, fitness), keep only individuals
+    selected_individuals = [item[0] if isinstance(item, tuple) else item for item in select_pop]
+    new_pop = selected_individuals.copy()
     if method == "permutation":
         while len(new_pop) < n_individus_tot:
-            for individual in select_pop:
-                new_pop.append(permutation(inp_list=individual[0], num=n_perm))
+            for individual in selected_individuals:
+                new_pop.append(permutation(inp_list=individual, num=n_perm))
+                if len(new_pop) >= n_individus_tot:
+                    break
         return new_pop[:n_individus_tot]
 
 
@@ -107,7 +114,7 @@ def main(instances:list, selection_method:str, crossover_method=None, mutation_m
         if final_population[i][1] < min:
             min = final_population[i][1]
             index = i
-    return final_population[index]
+    return final_population[index][0]
 
 
 
@@ -129,15 +136,20 @@ def cs_fix(fils, p):
     return vu
 
 def croisement_simple(p1:list, p2:list, pts_croisement:int):
-    fils_1=p1[:pts_croisement] + p2[pts_croisement+1:]
-    fils_2=p2[:pts_croisement] + p1[pts_croisement+1:]
-    return cs_fix(fils_1, p1), cs_fix(fils_2, p2)
+    fils_1 = p1[:pts_croisement] + p2[pts_croisement:]
+    fils_2 = p2[:pts_croisement] + p1[pts_croisement:]
+    return cs_fix(fils_1, p1.copy()), cs_fix(fils_2, p2.copy())
         
 def crossover(population:list, method:str, parameters:list):
     if method=="simple":
         n=len(population)//2
+        new_population = []
         for k in range(n):
-            croisement_simple(population[2*k], population[2*k + 1], parameters[0])
+            c1, c2 = croisement_simple(population[2*k], population[2*k + 1], parameters[0])
+            new_population.extend([c1, c2])
+        if len(population) % 2 == 1:
+            new_population.append(population[-1])
+        return new_population
     else:
         return population
     
@@ -178,13 +190,17 @@ def init(instances:list, nb_slt:int):
 def roulette(population_fit:list):
     n=len(population_fit)
     selection = []
-    sum_fit=0
+    # Lower fitness = better route, so convert distances to positive weights.
+    weights = [1.0 / (item[1] + 1e-12) for item in population_fit]
+    sum_fit = sum(weights)
     for k in range(n):
-        sum_fit+=population_fit[k][1]
-    for k in range(n):
-        proba=population_fit[k][1]/sum_fit
-        if rd.randint(0,100) < proba:
+        proba = weights[k] / sum_fit
+        if rd.random() < proba:
             selection.append(population_fit[k])
+    if not selection:
+        # Keep at least one parent to avoid empty-population loops.
+        best = min(population_fit, key=lambda x: x[1])
+        selection = [best]
     return selection
 
 def tri_pivot(l:list):
@@ -192,23 +208,32 @@ def tri_pivot(l:list):
         return []
     elif len(l)==1:
         return l
-    pivot=l[0][0]
+    pivot=l[0]
     l1=[]
     l2=[]
-    for k in range(1,len(l1)):
-        if l[k][0]<pivot:
+    for k in range(1,len(l)):
+        if l[k][1] < pivot[1]:
             l1.append(l[k])
         else :
             l2.append(l[k])
-    return tri_pivot(l1) + pivot + tri_pivot(l2)
+    return tri_pivot(l1) + [pivot] + tri_pivot(l2)
 
 def elitisme(population_fit:list, n:int):
+    if n <= 0:
+        n = 1
     pop_triee=tri_pivot(population_fit)
     return pop_triee[:n]
         
 def selection(population_fit:list, methode:str, parameters:list):
     if methode=="roulette":
-        return roulette(population_fit)
+        selected = roulette(population_fit)
+        if not selected:
+            return [min(population_fit, key=lambda x: x[1])]
+        return selected
     elif methode=="elitisme":
-        return elitisme(population_fit, parameters[0])
+        n = parameters[0] if parameters else 1
+        selected = elitisme(population_fit, n)
+        if not selected:
+            return [min(population_fit, key=lambda x: x[1])]
+        return selected
     
