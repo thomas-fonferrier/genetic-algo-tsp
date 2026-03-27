@@ -174,16 +174,64 @@ def fitness(trip:list): # Distance du parcouru
 ## Initialisation :
 
 def init(instances:list, nb_slt:int):
-    solutions=[] # pt utiliser des dictionnaire ?
-    for i in range(nb_slt):
-        individu=[]
-        list_indice=[i for i in range(len(instances))]
-        for k in range(len(instances)):
-            i=rd.randint(0, len(list_indice)-1)
-            indice=list_indice[i]
-            individu.append(instances[indice])
-            list_indice.remove(indice)
-        solutions.append(individu)
+
+    """
+        solutions=[] # pt utiliser des dictionnaire ?
+        for i in range(nb_slt):
+            individu=[]
+            list_indice=[i for i in range(len(instances))]
+            for k in range(len(instances)):
+                i=rd.randint(0, len(list_indice)-1)
+                indice=list_indice[i]
+                individu.append(instances[indice])
+                list_indice.remove(indice)
+            solutions.append(individu)
+    """
+
+    """
+    Build an initial population of diverse but short tours.
+
+    Strategy:
+    - For each individual, choose a random start city.
+    - Then repeatedly choose one of the k nearest unvisited cities
+      (k=3 by default), which keeps tours short while preserving diversity.
+    """
+    if not instances:
+        return []
+
+    solutions = []
+    n_cities = len(instances)
+    nearest_pool_size = min(3, n_cities - 1) if n_cities > 1 else 0
+
+    for _ in range(nb_slt):
+        unvisited = list(range(n_cities))
+        start_idx = rd.choice(unvisited)
+        route_idx = [start_idx]
+        unvisited.remove(start_idx)
+        current_idx = start_idx
+
+        while unvisited:
+            # Compute distances from current city to each unvisited city.
+            ranked_candidates = sorted(
+                unvisited,
+                key=lambda idx: distance_euclidienne(
+                    instances[current_idx], instances[idx]
+                ),
+            )
+
+            # Pick among nearest candidates to keep good edges and diversity.
+            if nearest_pool_size > 0:
+                pool = ranked_candidates[:nearest_pool_size]
+                next_idx = rd.choice(pool)
+            else:
+                next_idx = ranked_candidates[0]
+
+            route_idx.append(next_idx)
+            unvisited.remove(next_idx)
+            current_idx = next_idx
+
+        solutions.append([instances[idx] for idx in route_idx])
+
     return solutions
 
 ## Fonctions de séléction :
