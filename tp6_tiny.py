@@ -1,6 +1,5 @@
 import requests
 
 
-print(cities)
 
 
