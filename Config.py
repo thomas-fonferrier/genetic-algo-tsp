@@ -1,9 +1,48 @@
+
+import random
 import requests
 
 def fetch_data(instance):
     data = requests.get(f"https://tsp-sra0.onrender.com/instances/{instance}")
     data.raise_for_status()
     return data.json()
+
+def mutation(individual:list, method:str, n=0):
+    if method == "permutation":
+        permutation(inp_list=individual, num=n)
+
+def permutation(inp_list:list, num:int):
+    # obtain list of indices that will be shuffled
+    indices = random.sample(range(len(inp_list)), num)
+
+    # keep trying to build up a dictionary of mappings
+    # between old and new position, until it is successful
+    #
+    # Define "succcess" as meaning that no item is back in 
+    # its original position
+    #
+    shuffled_indices = indices.copy()
+    success = False
+    while not success:
+        random.shuffle(shuffled_indices)
+        mapping = { a:b for a, b in zip(indices, shuffled_indices) }
+        for a, b in mapping.items():
+            if a == b:
+                success = False
+                break
+        else:
+            success = True
+
+    # Now apply the mappings
+
+    out_list = inp_list.copy()
+    for a, b in mapping.items():
+        out_list[a] = inp_list[b]
+
+    return out_list
+        
+
+
 
 '''
 Format d'une solution :
