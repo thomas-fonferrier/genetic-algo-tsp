@@ -7,6 +7,8 @@ def fetch_data(instance):
     data.raise_for_status()
     return data.json()
 
+## Mutation :
+
 def mutation(select_pop:list, method:str, n_individus_tot, n_perm=0):
     new_pop = select_pop.copy()
     if method == "permutation":
@@ -14,6 +16,7 @@ def mutation(select_pop:list, method:str, n_individus_tot, n_perm=0):
             for individual in select_pop:
                 new_pop.append(permutation(inp_list=individual[0], num=n_perm))
         return new_pop[:n_individus_tot]
+
 
 def permutation(inp_list:list, num:int):
     # obtain list of indices that will be shuffled
@@ -62,6 +65,19 @@ def evaluation(population):
         list.append((individual, fitness(individual)))
     return list
 
+## Croisement : 
+def cs_fix(fils, p):
+    pass
+
+def croisement_simple(p1:list, p2:list, pts_croisement:int):
+    fils_1=[p1[:pts_croisement] + p2[pts_croisement+1:]]
+    fils_2=[p2[:pts_croisement] + p1[pts_croisement+1:]]
+    return cs_fix(fils_1, p1), cs_fix(fils_2, p2)
+    pass
+        
+
+
+## Distance : calul + evalutation
 '''
 Format d'une solution :
 liste avec l'indice de la ville visité ordonnée.
@@ -82,7 +98,9 @@ def fitness(trip:list): # Distance du parcouru
     distance=0
     for i in range(len(trip)-1):
         distance += distance_euclidienne(trip[i], trip[i+1])
-    return distance
+    return distance + distance_euclidienne(trip[-1], trip[0])
+
+## Initialisation :
 
 def init(instances:list, nb_slt:int):
     solutions=[] # pt utiliser des dictionnaire ?
