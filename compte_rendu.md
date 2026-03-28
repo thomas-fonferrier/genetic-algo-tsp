@@ -110,6 +110,10 @@ Nous avons également codé un opérateur de **croisement simple** entre deux pa
 
 En pratique, sur nos instances et avec le reste du pipeline, ce croisement **n’améliorait pas** les résultats (voire les dégradait ou compliquait le réglage). Nous avons donc **choisi de ne pas l’activer** dans la boucle principale : l’appel à `crossover` dans **`main`** n’est effectué que si l’utilisateur passe explicitement un `crossover_method`. Cette décision illustre qu’un AG n’est pas une recette figée : la pertinence des opérateurs dépend du codage des individus, de la fitness et du paysage du problème.
 
+Piste d'évolution : Nous avions aussi pensé à une autre méthode de croisement en combinant des sous ensembles de toutes les villes. 
+Idée simple : On découpe notre ensemble complet de points à relier en 2 ensembles distincts non conjoints. On impose aux parents de définir leur `tour` dans les deux ensembles avant de les relier en deux points. Ainsi, pour deux parents, on peut produire deux fils avec chacun un sous-ensemble de leur parents.
+Cette idée peut encore évoluer en définissant n sous-ensembles et en faisant varier la façon dont les parents produisent un fils.
+
 ---
 
 ## 9. Boucle principale (`main`)

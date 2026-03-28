@@ -89,7 +89,8 @@ The `upload_result` helper builds `tour` from the ordered list of coordinates, i
 
 - **`n_perm`**: small values keep mutations local; large values tend to destroy good elite tours.  
 - **`n_elitism`**: often set to ~10% of `n_individus` (e.g. 30 / 300).  
-- **`n_loop` / `n_individus`**: trade-off between solution quality and runtime on your machine.  
+- **`n_loop` / `n_individus`**: trade-off between solution quality and runtime on your machine.
+- **`n_crossover`**: often set to 50% of the number of "cities".
 
 ## Authors & context
 
